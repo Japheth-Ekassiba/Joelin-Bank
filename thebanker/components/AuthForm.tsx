@@ -24,6 +24,7 @@ import { Loader2 } from 'lucide-react'
  
 import { signIn, signUp } from '@/lib/actions/user.actions'
 import { useRouter } from 'next/navigation'
+import PlaidLink from './PlaidLink'
 
 
 
@@ -50,13 +51,26 @@ const AuthForm = ({ type }: { type: string }) => {
 
     try{
        //Sign Up with Appwrite and Create plain link token
-       if(type === 'sign-up'){
-         const newUser = await signUp(data);
-         setUser(newUser);
 
-         
-       }
+       
+       if(type === 'sign-up') {
+        const userData = {
+          firstName: data.firstName!,
+          lastName: data.lastName!,
+          address1: data.address1!,
+          city: data.city!,
+          state: data.state!,
+          postalCode: data.postalCode!,
+          dateOfBirth: data.dateOfBirth!,
+          ssn: data.ssn!,
+          email: data.email,
+          password: data.password
+        }
 
+        const newUser = await signUp(userData);
+
+        setUser(newUser);
+      }
        if(type === 'sign-in'){
          const response = await signIn({
           email: data.email,
@@ -104,7 +118,7 @@ const AuthForm = ({ type }: { type: string }) => {
 
       {user ? (
         <div className="flex flex-col gap-4">
-          {/* PlaidLink */}
+          <PlaidLink user={user} variant='primary' />
         </div>
       ) : (
         <>
@@ -128,7 +142,7 @@ const AuthForm = ({ type }: { type: string }) => {
                   />
                   <div className="flex gap-4">
                     <CustomInput
-                      control={form.control} name='county' label='County' placeholder='Example: Nairobi'
+                      control={form.control} name='state' label='State' placeholder='Example: Nairobi'
                     />
                     <CustomInput
                       control={form.control} name='postalCode' label='Postal Code' placeholder='Example: 00100'
@@ -140,7 +154,7 @@ const AuthForm = ({ type }: { type: string }) => {
                       control={form.control} name='dateOfBirth' label='Date Of Birth' placeholder='YYYY-MM-DD'
                     />
                     <CustomInput
-                      control={form.control} name='identificationDocument' label='ID' placeholder='Enter Your ID No'
+                      control={form.control} name='ssn' label='SSN' placeholder='Enter Your ID No'
                     />
                   </div>
                 </>
@@ -180,7 +194,7 @@ const AuthForm = ({ type }: { type: string }) => {
             <Link href={type === 'sign-in' ? '/sign-up' : '/sign-in'} className="form-link">{type === 'sign-in' ? 'Sign Up' : 'Sign In'}</Link>
           </footer>
         </>
-      )}
+       )} 
     </section>
   )
 }
